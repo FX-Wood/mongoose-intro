@@ -8,6 +8,8 @@ const port = process.env.PORT || 3001
 const db = mongoose.connection;
 const Movie = require('./models/movie')
 const BlogPost = require('./models/blogpost')
+const Product = require('./models/product')
+const Order = require('./models/order')
 db.once('open', () => {
     console.log(`Connected to MongoDB at ${db.host}:${db.port}`)
 });
@@ -38,19 +40,34 @@ app.get('/', (req, res) => {
 //     console.log(doc)
 // })
 
-const post = new BlogPost({ title: 'Cat', body: 'Yeehaw! Farge!' })
+// const post = new BlogPost({ title: 'Cat', body: 'Yeehaw! Farge!' })
 
-post.comments.push({ title: 'What?', content: 'A comment!', date: new Date() })
+// post.comments.push({ title: 'What?', content: 'A comment!', date: new Date() })
 
-post.save((err, doc) => {
-    if (!err) {
-        console.log('Success!', doc )
-    } else {
-        console.log(err);
-    }
+// post.save((err, doc) => {
+//     if (!err) {
+//         console.log('Success!', doc )
+//     } else {
+//         console.log(err);
+//     }
+// })
+
+const product = new Product({ name: 'Hammer', price: 3 })
+// product.save()
+
+// // Adding embedded subdocs to a document
+const order = new Order({});
+order.products.push(product)
+order.save()
+
+// Populating referenced data
+// Order.findOne({}).populate('products').exec( (err, order) => {
+//     console.log(order)
+// })
+
+Order.findOne({}, (err, order) => {
+    Product.find({})
 })
-
-// Adding embedded subdocs to a document
 
 app.listen(port, () => {
     console.log('mongoose-intro listening on port', port)
